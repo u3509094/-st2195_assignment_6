@@ -8,3 +8,8 @@ speeches <- speeches[, c("date", "contents")]
 
 fx_speeches <- fx %>% left_join(speeches, by = c("period" = "date"))
 str(fx_speeches)
+
+# period column data type: chr to Date
+fx_speeches$period <- as.Date(fx_speeches$period)
+# value column data type: chr to num
+fx_speeches$value <- as.numeric(fx_speeches$value)
