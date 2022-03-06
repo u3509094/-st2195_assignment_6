@@ -23,3 +23,8 @@ max(fx_speeches$value, na.rm = TRUE)
 library(ggplot2)
 ggplot(fx_speeches) +
   geom_histogram(aes(x = value))
+
+#Replace NA by the exchange rate of previous date
+library(tidyr)
+fx_speeches <- fill(fx_speeches, value, .direction = "up")
+sum(is.na(fx$value))
