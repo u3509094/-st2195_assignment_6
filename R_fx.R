@@ -13,3 +13,13 @@ str(fx_speeches)
 fx_speeches$period <- as.Date(fx_speeches$period)
 # value column data type: chr to num
 fx_speeches$value <- as.numeric(fx_speeches$value)
+
+#NA, min and max in the value column
+sum(is.na(fx_speeches$value))
+min(fx_speeches$value, na.rm = TRUE)
+max(fx_speeches$value, na.rm = TRUE)
+
+#Distribution of exchange rate in the value column
+library(ggplot2)
+ggplot(fx_speeches) +
+  geom_histogram(aes(x = value))
