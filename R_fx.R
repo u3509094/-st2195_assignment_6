@@ -47,3 +47,8 @@ fx <- mutate(fx,
              fx_per_diff = fx_diff / value * 100,
              good_news = ifelse(fx_per_diff > 0.5, 1, 0),
              bad_news = ifelse(fx_per_diff < -0.5, 1, 0))
+
+#Align the data type in the date column for joining
+speeches$date <- as.Date(speeches$date)
+fx_speeches <- fx %>% left_join(speeches, by = c("period" = "date"))
+str(fx_speeches)
