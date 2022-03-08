@@ -6,25 +6,31 @@ fx <- fx[, c("period", "value")]
 speeches <- read.csv("speeches.csv", sep = "|", quote = "")
 speeches <- speeches[, c("date", "contents")]
 
-fx_speeches <- fx %>% left_join(speeches, by = c("period" = "date"))
+#Joining fx and speeches dataset
+library(dplyr)
+fx_speeches <- fx %>%
+  left_join(speeches, by = c("period" = "date"))
 str(fx_speeches)
 
-# period column data type: chr to Date
+#period column data type: chr to Date
 fx_speeches$period <- as.Date(fx_speeches$period)
-# value column data type: chr to num
+#value column data type: chr to num
 fx_speeches$value <- as.numeric(fx_speeches$value)
+str(fx_speeches)
 
-#NA, min and max in the value column
+#No. of Not Available in the value column
 sum(is.na(fx_speeches$value))
+#Minimum and maximum value in the value column
 min(fx_speeches$value, na.rm = TRUE)
 max(fx_speeches$value, na.rm = TRUE)
 
-#Distribution of exchange rate in the value column
+#Distribution of the exchange rate
 library(ggplot2)
 ggplot(fx_speeches) +
   geom_histogram(aes(x = value))
 
-#Replace NA by the exchange rate of previous date
+#Replace NA with exchange rate in the previous date
 library(tidyr)
-fx_speeches <- fill(fx_speeches, value, .direction = "up")
+fx_speeches <- fx_speeches %>% 
+  fill(value, .direction = "up")
 sum(is.na(fx$value))
