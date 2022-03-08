@@ -38,23 +38,36 @@ sum(is.na(fx$value))
 #Repeat lines 13-17 and lines 29-34 on fx dataset
 fx$period <- as.Date(fx$period)
 fx$value <- as.numeric(fx$value)
-fx <- fill(fx, value, .direction = "up")
+fx <- fx %>%
+  fill(value, .direction = "up")
 sum(is.na(fx$value))
 
 #Create new columns in the fx dataframe
-fx <- mutate(fx,
-             fx_diff = value - lead(value),
-             fx_per_diff = fx_diff / value * 100,
-             good_news = ifelse(fx_per_diff > 0.5, 1, 0),
-             bad_news = ifelse(fx_per_diff < -0.5, 1, 0))
+fx <- fx %>% 
+  mutate(fx_diff = value - lead(value),
+         fx_per_diff = fx_diff / value * 100,
+         good_news = ifelse(fx_per_diff > 0.5, 1, 0),
+         bad_news = ifelse(fx_per_diff < -0.5, 1, 0))
 
 #Align the data type in the date column for joining
 speeches$date <- as.Date(speeches$date)
-fx_speeches <- fx %>% left_join(speeches, by = c("period" = "date"))
+fx_speeches <- fx %>%
+  left_join(speeches, by = c("period" = "date"))
 str(fx_speeches)
 
 #Remove NAs in the contents column
 sum(is.na(fx_speeches$contents))
-fx_speeches <- drop_na(fx_speeches, contents)
+fx_speeches <- fx_speeches %>%
+  drop_na(contents)
 #Remove the prefix "SPEECH" in the contents column
-fx_speeches$contents <- ifelse(substr(fx_speeches$contents, 1, 11) == "   SPEECH  ", substr(fx_speeches$content, 12, nchar(fx_speeches$contents)), fx_speeches$contents)
+fx_speeches$contents <- ifelse(substr(fx_speeches$contents, 1, 11) == "   SPEECH  ",
+                               substr(fx_speeches$content, 12, nchar(fx_speeches$contents)),
+                               fx_speeches$contents)
+
+#Select good_news and bad_news for word extraction
+fx_good <- fx_speeches %>%
+  filter(good_news == 1) %>%
+  select(period, contents)
+fx_bad <- fx_speeches %>%
+  filter(bad_news == 1) %>%
+  select(period, contents)
