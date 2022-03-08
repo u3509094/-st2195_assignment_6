@@ -95,3 +95,10 @@ fx_bad_indicators <- fx_bad %>%
 fx_bad_indicators <- fx_bad_indicators %>% 
   filter(!word %in% connector_list) %>% 
   top_n(20)
+
+#Check any words in common in two cases
+good_bad_intersect <- intersect(fx_good_indicators$word, fx_bad_indicators$word)
+
+#Store the good_indicators and bad_indicators in CSV files
+write.csv(fx_good_indicators, file = "good_indicators_r.csv")
+write.csv(fx_bad_indicators, file = "bad_indicators_r.csv")
