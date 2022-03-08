@@ -85,3 +85,13 @@ connector_list <- c("the", "of", "and", "in", "to", "a", "is", "that", "for", "o
 fx_good_indicators <- fx_good_indicators %>% 
   filter(!word %in% connector_list) %>% 
   top_n(20)
+
+#Re-do word counting in fx_bad
+fx_bad_indicators <- fx_bad %>% 
+  unnest_tokens(input = contents, output = word) %>% 
+  count(word) %>% 
+  arrange(desc(n)) %>% 
+  top_n(100)
+fx_bad_indicators <- fx_bad_indicators %>% 
+  filter(!word %in% connector_list) %>% 
+  top_n(20)
