@@ -71,3 +71,17 @@ fx_good <- fx_speeches %>%
 fx_bad <- fx_speeches %>%
   filter(bad_news == 1) %>%
   select(period, contents)
+
+#Count the word occurrence in the contents column in fx_good
+library(tidytext)
+fx_good_indicators <- fx_good %>%
+  unnest_tokens(input = contents, output = word) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  top_n(100)
+
+#Exclude the prepositions and connectors and select 20 words with highest count
+connector_list <- c("the", "of", "and", "in", "to", "a", "is", "that", "for", "on", "this", "as", "â", "be", "by", "are", "have", "it", "with", "has", "de", "at", "we", "which", "not", "an", "i", "will", "from", "more", "also", "been", "der", "die", "our", "would", "can", "these", "s", "their", "la", "but", "its", "or", "was", "should", "all", "they", "some", "there")
+fx_good_indicators <- fx_good_indicators %>% 
+  filter(!word %in% connector_list) %>% 
+  top_n(20)
