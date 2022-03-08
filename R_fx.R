@@ -18,7 +18,7 @@ fx_speeches$period <- as.Date(fx_speeches$period)
 fx_speeches$value <- as.numeric(fx_speeches$value)
 str(fx_speeches)
 
-#No. of Not Available in the value column
+#No. of NAs in the value column
 sum(is.na(fx_speeches$value))
 #Minimum and maximum value in the value column
 min(fx_speeches$value, na.rm = TRUE)
@@ -29,7 +29,7 @@ library(ggplot2)
 ggplot(fx_speeches) +
   geom_histogram(aes(x = value))
 
-#Replace NA with exchange rate in the previous date
+#Replace NAs with exchange rate in the previous date
 library(tidyr)
 fx_speeches <- fx_speeches %>% 
   fill(value, .direction = "up")
@@ -52,3 +52,9 @@ fx <- mutate(fx,
 speeches$date <- as.Date(speeches$date)
 fx_speeches <- fx %>% left_join(speeches, by = c("period" = "date"))
 str(fx_speeches)
+
+#Remove NAs in the contents column
+sum(is.na(fx_speeches$contents))
+fx_speeches <- drop_na(fx_speeches, contents)
+#Remove the prefix "SPEECH" in the contents column
+fx_speeches$contents <- ifelse(substr(fx_speeches$contents, 1, 11) == "   SPEECH  ", substr(fx_speeches$content, 12, nchar(fx_speeches$contents)), fx_speeches$contents)
