@@ -1,5 +1,5 @@
 #Daily USD/EUR reference exchange rate dataset from the ECB Statistical Data Warehouse
-fx <- read.csv("data.csv", header = FALSE, col.names = c("period", "value", 'obs.status'))
+fx <- read.csv("data.csv", header = FALSE, col.names = c("period", "value", "obs.status"))
 fx <- fx[, c("period", "value")]
 str(fx)
 #period column data type: chr to Date
@@ -9,7 +9,7 @@ fx$value <- as.numeric(fx$value)
 str(fx)
 
 #Speeches dataset from the European Central Bank
-speeches <- read.csv("speeches.csv", sep = "|", quote = "")
+speeches <- read.csv("speeches.csv", sep = "|", quote = "", na.strings = "")
 speeches <- speeches[, c("date", "contents")]
 str(speeches)
 #date column data type: chr to Date
@@ -49,6 +49,9 @@ sum(is.na(fx_speeches$contents))
 fx_speeches$contents <- ifelse(substr(fx_speeches$contents, 1, 11) == "   SPEECH  ",
                             substr(fx_speeches$content, 12, nchar(fx_speeches$contents)),
                             fx_speeches$contents)
+fx_speeches$contents <- ifelse(substr(fx_speeches$contents, 1, 10) == "   SPEECH ",
+                               substr(fx_speeches$content, 11, nchar(fx_speeches$contents)),
+                               fx_speeches$contents)
 
 #Create new columns in the fx dataframe
 fx_speeches <- fx_speeches %>% 
