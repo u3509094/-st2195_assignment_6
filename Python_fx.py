@@ -59,33 +59,18 @@ for i in range(fx_good.shape[0]):
 
 fx_good = fx_good.loc[0, "contents"]
 
-fx_good = pd.DataFrame(data = pd.value_counts(fx_good), columns = ["n"])
-fx_good["word"] = fx_good.index
+fx_good = pd.DataFrame({"word": pd.value_counts(fx_good).index, "n": pd.value_counts(fx_good)})
 fx_good.reset_index(drop = True, inplace = True)
-fx_good = fx_good[["word", "n"]]
 fx_good["word"] = fx_good["word"].str.lower()
 fx_good = fx_good.head(100)
 
 connector_list = ["the", "of", "and", "in", "to", "a", "is", "that", "for", "on", "this", "as", "â", "be", "by", "are", "have", "it", "with", "has", "de", "at", "we", "which", "not", "an", "i", "will", "from", "more", "also", "been", "der", "die", "our", "would", "can", "these", "s", "their", "la", "but", "its", "or", "was", "should", "all", "they", "some", "there"]
 punctuation_list = [",", ".", "(", ")", "’", "]", "[", ":", "–", "“", "”", "%"]
-for i in range(len(connector_list)):
-    for j in range(fx_good.shape[0]):
-        if connector_list[i] == fx_good.loc[j, "word"]:
-            fx_good.loc[j, "word"] = ""
-        else:
-            continue
-        
-for i in range(len(punctuation_list)):
-    for j in range(fx_good.shape[0]):
-        if punctuation_list[i] == fx_good.loc[j, "word"]:
-            fx_good.loc[j, "word"] = ""
-        else:
-            continue
 
-fx_good = fx_good[fx_good["word"] != ""]        
+fx_good = fx_good[~fx_good["word"].isin(connector_list)]
+fx_good = fx_good[~fx_good["word"].isin(punctuation_list)]     
 fx_good.reset_index(drop = True, inplace = True)
 fx_good = fx_good.head(20)
-fx_good.to_csv('good_indicators_python.csv')
 
 for i in range(fx_bad.shape[0]):
     fx_bad.loc[i, "contents"] = nltk.word_tokenize(fx_bad.loc[i, "contents"])
@@ -99,28 +84,13 @@ for i in range(fx_bad.shape[0]):
 
 fx_bad = fx_bad.loc[0, "contents"]
 
-fx_bad = pd.DataFrame(data = pd.value_counts(fx_bad), columns = ["n"])
-fx_bad["word"] = fx_bad.index
+fx_bad = pd.DataFrame({"word": pd.value_counts(fx_bad).index, "n": pd.value_counts(fx_bad)})
 fx_bad.reset_index(drop = True, inplace = True)
-fx_bad = fx_bad[["word", "n"]]
 fx_bad["word"] = fx_bad["word"].str.lower()
 fx_bad = fx_bad.head(100)
 
-for i in range(len(connector_list)):
-    for j in range(fx_bad.shape[0]):
-        if connector_list[i] == fx_bad.loc[j, "word"]:
-            fx_bad.loc[j, "word"] = ""
-        else:
-            continue
-        
-for i in range(len(punctuation_list)):
-    for j in range(fx_bad.shape[0]):
-        if punctuation_list[i] == fx_bad.loc[j, "word"]:
-            fx_bad.loc[j, "word"] = ""
-        else:
-            continue
-
-fx_bad = fx_bad[fx_bad["word"] != ""]        
+fx_bad = fx_bad[~fx_bad["word"].isin(connector_list)]
+fx_bad = fx_bad[~fx_bad["word"].isin(punctuation_list)]     
 fx_bad.reset_index(drop = True, inplace = True)
 fx_bad = fx_bad.head(20)
 
